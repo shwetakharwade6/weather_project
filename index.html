@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  
+  <!-- Internal CSS -->
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #87CEEB; /* Calm blue background */
+      font-family: Arial, sans-serif;
+    }
+
+    .weather-container {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 300px;
+    }
+
+    input {
+      padding: 8px;
+      width: 80%;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px;
+      background: #2575fc;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1a5ed8;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="weather-container">
+    <h2>🌦 Weather App</h2>
+    <input type="text" id="city" placeholder="Enter city name">
+    <button onclick="getWeather()">Check Weather</button>
+    
+    <div id="result"></div>
+  </div>
+
+  <!-- Internal JavaScript -->
+  <script>
+    async function getWeather() {
+      let city = document.getElementById("city").value;
+      let resultDiv = document.getElementById("result");
+      
+      if (city === "") {
+        resultDiv.innerHTML = "⚠️ Please enter a city name!";
+        return;
+      }
+
+      let apiKey = "b49b02fc78f1955eb44740d6cf3387b2"; // Replace with your OpenWeather API key
+      let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+      try {
+        let response = await fetch(url);
+        let data = await response.json();
+
+        if (data.cod === "404") {
+          resultDiv.innerHTML = "❌ City not found!";
+        } else {
+          resultDiv.innerHTML = `
+            🌍 <b>${data.name}, ${data.sys.country}</b><br>
+            🌡 Temperature: ${data.main.temp} °C<br>
+            ☁️ Condition: ${data.weather[0].description}<br>
+            💧 Humidity: ${data.main.humidity} %<br>
+            🌬 Wind Speed: ${data.wind.speed} m/s
+          `;
+        }
+      } catch (error) {
+        resultDiv.innerHTML = "⚠️ Error fetching data!";
+      }
+    }
+  </script>
+</body>
+</html>
